@@ -22,9 +22,7 @@ async def get_media_info():
     if current_session:
         media_props = await current_session.try_get_media_properties_async()
         return {
-            song_attr: media_props.__getattribute__(song_attr)
-            for song_attr in dir(media_props)
-            if song_attr[0] != '_'
+            song_attr: media_props.__getattribute__(song_attr) for song_attr in dir(media_props) if song_attr[0] != "_"
         }
 
 

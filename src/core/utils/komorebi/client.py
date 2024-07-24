@@ -6,16 +6,12 @@ from typing import Optional
 
 
 def add_index(dictionary: dict, dictionary_index: int) -> dict:
-    dictionary['index'] = dictionary_index
+    dictionary["index"] = dictionary_index
     return dictionary
 
 
 class KomorebiClient:
-    def __init__(
-            self,
-            komorebic_path: str = "komorebic.exe",
-            timeout_secs: int = 0.5
-    ):
+    def __init__(self, komorebic_path: str = "komorebic.exe", timeout_secs: int = 0.5):
         super().__init__()
         self._timeout_secs = timeout_secs
         self._komorebic_path = komorebic_path
@@ -27,15 +23,15 @@ class KomorebiClient:
             return json.loads(output)
 
     def get_screens(self, state: dict) -> list:
-        return state['monitors']['elements']
+        return state["monitors"]["elements"]
 
     def get_screen_by_hwnd(self, state: dict, screen_hwnd: int) -> Optional[dict]:
         for i, screen in enumerate(self.get_screens(state)):
-            if screen.get('id', None) == screen_hwnd:
+            if screen.get("id", None) == screen_hwnd:
                 return add_index(screen, i)
 
     def get_workspaces(self, screen: dict) -> list:
-        return [add_index(workspace, i) for i, workspace in enumerate(screen['workspaces']['elements'])]
+        return [add_index(workspace, i) for i, workspace in enumerate(screen["workspaces"]["elements"])]
 
     def get_workspace_by_index(self, screen: dict, workspace_index: int) -> Optional[dict]:
         try:
@@ -45,40 +41,39 @@ class KomorebiClient:
 
     def get_focused_workspace(self, screen: dict) -> Optional[dict]:
         try:
-            focused_workspace_index = screen['workspaces']['focused']
+            focused_workspace_index = screen["workspaces"]["focused"]
             focused_workspace = self.get_workspace_by_index(screen, focused_workspace_index)
-            focused_workspace['index'] = focused_workspace_index
+            focused_workspace["index"] = focused_workspace_index
             return focused_workspace
         except (KeyError, TypeError):
             return None
 
     def get_num_windows(self, workspace: dict):
-        containers = workspace['containers']['elements']
-        if workspace.get('floating_windows', []):
+        containers = workspace["containers"]["elements"]
+        if workspace.get("floating_windows", []):
             return True
 
         for container in containers:
-            if container.get('windows', {}).get('elements', []):
+            if container.get("windows", {}).get("elements", []):
                 return True
 
         return False
 
     def get_workspace_by_window_hwnd(self, workspaces: list[Optional[dict]], window_hwnd: int) -> Optional[dict]:
         for i, workspace in enumerate(workspaces):
-
-            for floating_window in workspace['floating_windows']:
-                if floating_window['hwnd'] == window_hwnd:
+            for floating_window in workspace["floating_windows"]:
+                if floating_window["hwnd"] == window_hwnd:
                     return add_index(workspace, i)
 
-            if ('containers' not in workspace) or ('elements' not in workspace['containers']):
+            if ("containers" not in workspace) or ("elements" not in workspace["containers"]):
                 continue
 
-            for container in workspace['containers']['elements']:
-                if ('windows' not in container) or ('elements' not in container['windows']):
+            for container in workspace["containers"]["elements"]:
+                if ("windows" not in container) or ("elements" not in container["windows"]):
                     continue
 
-                for managed_window in container['windows']['elements']:
-                    if managed_window['hwnd'] == window_hwnd:
+                for managed_window in container["windows"]["elements"]:
+                    if managed_window["hwnd"] == window_hwnd:
                         return add_index(workspace, i)
 
     def activate_workspace(self, ws_idx: int) -> None:
@@ -111,10 +106,7 @@ class KomorebiClient:
     def flip_layout(self) -> None:
         try:
             subprocess.Popen(
-                [self._komorebic_path, "flip-layout"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                shell=True
+                [self._komorebic_path, "flip-layout"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True
             )
         except subprocess.SubprocessError:
             pass
@@ -127,10 +119,7 @@ class KomorebiClient:
 
     def wait_until_subscribed_to_pipe(self, pipe_name: str):
         proc = subprocess.Popen(
-            [self._komorebic_path, "subscribe", pipe_name],
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            [self._komorebic_path, "subscribe", pipe_name], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         _stdout, stderr = proc.communicate()
 

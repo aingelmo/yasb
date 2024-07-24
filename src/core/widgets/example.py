@@ -7,11 +7,11 @@ class ExampleWidget(BaseWidget):
     validation_schema = EXAMPLE_VALIDATION_SCHEMA
 
     def __init__(
-            self,
-            label: str,
-            label_alt: str,
-            update_interval: int,
-            callbacks: dict[str, str],
+        self,
+        label: str,
+        label_alt: str,
+        update_interval: int,
+        callbacks: dict[str, str],
     ):
         super().__init__(update_interval, class_name="template-widget")
         self._show_alt_label = False
@@ -28,9 +28,9 @@ class ExampleWidget(BaseWidget):
         self.register_callback("toggle_label", self._toggle_label)
         self.register_callback("update_label", self._update_label)
 
-        self.callback_left = callbacks['on_left']
-        self.callback_right = callbacks['on_right']
-        self.callback_middle = callbacks['on_middle']
+        self.callback_left = callbacks["on_left"]
+        self.callback_right = callbacks["on_right"]
+        self.callback_middle = callbacks["on_middle"]
         self.callback_timer = "update_label"
 
         self._label.show()

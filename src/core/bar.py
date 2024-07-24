@@ -9,6 +9,7 @@ from BlurWindow.blurWindow import GlobalBlur
 
 try:
     from core.utils.win32 import app_bar
+
     IMPORT_APP_BAR_MANAGER_SUCCESSFUL = True
 except ImportError:
     IMPORT_APP_BAR_MANAGER_SUCCESSFUL = False
@@ -16,19 +17,19 @@ except ImportError:
 
 class Bar(QWidget):
     def __init__(
-            self,
-            bar_id: str,
-            bar_name: str,
-            bar_screen: QScreen,
-            stylesheet: str,
-            widgets: dict[str, list],
-            init: bool = False,
-            class_name: str = BAR_DEFAULTS['class_name'],
-            alignment: dict = BAR_DEFAULTS['alignment'],
-            blur_effect: dict = BAR_DEFAULTS['blur_effect'],
-            window_flags: dict = BAR_DEFAULTS['window_flags'],
-            dimensions: dict = BAR_DEFAULTS['dimensions'],
-            padding: dict = BAR_DEFAULTS['padding']
+        self,
+        bar_id: str,
+        bar_name: str,
+        bar_screen: QScreen,
+        stylesheet: str,
+        widgets: dict[str, list],
+        init: bool = False,
+        class_name: str = BAR_DEFAULTS["class_name"],
+        alignment: dict = BAR_DEFAULTS["alignment"],
+        blur_effect: dict = BAR_DEFAULTS["blur_effect"],
+        window_flags: dict = BAR_DEFAULTS["window_flags"],
+        dimensions: dict = BAR_DEFAULTS["dimensions"],
+        padding: dict = BAR_DEFAULTS["padding"],
     ):
         super().__init__()
         self.hide()
@@ -42,11 +43,11 @@ class Bar(QWidget):
         self._padding = padding
 
         self.screen_name = self.screen().name()
-        self.app_bar_edge = app_bar.AppBarEdge.Top \
-            if self._alignment['position'] == "top" \
-            else app_bar.AppBarEdge.Bottom
+        self.app_bar_edge = (
+            app_bar.AppBarEdge.Top if self._alignment["position"] == "top" else app_bar.AppBarEdge.Bottom
+        )
 
-        if self._window_flags['windows_app_bar'] and IMPORT_APP_BAR_MANAGER_SUCCESSFUL:
+        if self._window_flags["windows_app_bar"] and IMPORT_APP_BAR_MANAGER_SUCCESSFUL:
             self.app_bar_manager = app_bar.Win32AppBar()
         else:
             self.app_bar_manager = None
@@ -58,7 +59,7 @@ class Bar(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        if self._window_flags['always_on_top']:
+        if self._window_flags["always_on_top"]:
             self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
 
         self._bar_frame = QFrame(self)
@@ -66,13 +67,8 @@ class Bar(QWidget):
         self._add_widgets(widgets)
         self.position_bar(init)
 
-        if blur_effect['enabled']:
-            GlobalBlur(
-                self.winId(),
-                Acrylic=blur_effect['acrylic'],
-                Dark=blur_effect['dark'],
-                QWidget=self
-            )
+        if blur_effect["enabled"]:
+            GlobalBlur(self.winId(), Acrylic=blur_effect["acrylic"], Dark=blur_effect["dark"], QWidget=self)
 
         self.screen().geometryChanged.connect(self.on_geometry_changed, Qt.ConnectionType.QueuedConnection)
         self.show()
@@ -90,9 +86,9 @@ class Bar(QWidget):
             self.app_bar_manager.create_appbar(
                 self.winId().__int__(),
                 self.app_bar_edge,
-                self._dimensions['height'],
+                self._dimensions["height"],
                 self.screen(),
-                scale_screen_height
+                scale_screen_height,
             )
 
     def try_remove_app_bar(self) -> None:
@@ -102,14 +98,14 @@ class Bar(QWidget):
     def bar_pos(self, bar_w: int, bar_h: int, screen_w: int, screen_h: int) -> tuple[int, int]:
         screen_x = self.screen().geometry().x()
         screen_y = self.screen().geometry().y()
-        x = int(screen_x + (screen_w / 2) - (bar_w / 2))if self._alignment['center'] else screen_x
-        y = int(screen_y + screen_h - bar_h) if self._alignment['position'] == "bottom" else screen_y
+        x = int(screen_x + (screen_w / 2) - (bar_w / 2)) if self._alignment["center"] else screen_x
+        y = int(screen_y + screen_h - bar_h) if self._alignment["position"] == "bottom" else screen_y
 
         return x, y
 
     def position_bar(self, init=False) -> None:
-        bar_width = self._dimensions['width']
-        bar_height = self._dimensions['height']
+        bar_width = self._dimensions["width"]
+        bar_height = self._dimensions["height"]
 
         screen_scale = self.screen().devicePixelRatio()
         screen_width = self.screen().geometry().width()
@@ -117,26 +113,26 @@ class Bar(QWidget):
 
         # Fix for non-primary display Windows OS scaling on app startup
         should_downscale_screen_geometry = (
-            init and
-            len(QApplication.screens()) > 1 and
-            screen_scale >= 2.0 and
-            QApplication.primaryScreen() != self.screen()
+            init
+            and len(QApplication.screens()) > 1
+            and screen_scale >= 2.0
+            and QApplication.primaryScreen() != self.screen()
         )
 
         if should_downscale_screen_geometry:
             screen_width = screen_width / screen_scale
             screen_height = screen_height / screen_scale
 
-        if is_valid_percentage_str(str(self._dimensions['width'])):
-            bar_width = int(screen_width * percent_to_float(self._dimensions['width']))
+        if is_valid_percentage_str(str(self._dimensions["width"])):
+            bar_width = int(screen_width * percent_to_float(self._dimensions["width"]))
 
         bar_x, bar_y = self.bar_pos(bar_width, bar_height, screen_width, screen_height)
         self.setGeometry(bar_x, bar_y, bar_width, bar_height)
         self._bar_frame.setGeometry(
-            self._padding['left'],
-            self._padding['top'],
-            bar_width - self._padding['left'] - self._padding['right'],
-            bar_height
+            self._padding["left"],
+            self._padding["top"],
+            bar_width - self._padding["left"] - self._padding["right"],
+            bar_height,
         )
 
         self.try_add_app_bar(scale_screen_height=not should_downscale_screen_geometry)
@@ -146,7 +142,7 @@ class Bar(QWidget):
         bar_layout.setContentsMargins(0, 0, 0, 0)
         bar_layout.setSpacing(0)
 
-        for column_num, layout_type in enumerate(['left', 'center', 'right']):
+        for column_num, layout_type in enumerate(["left", "center", "right"]):
             layout = QHBoxLayout()
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)

@@ -6,7 +6,7 @@ from PyQt6.QtGui import QScreen
 
 
 def percent_to_float(percent: str) -> float:
-    return float(percent.strip('%')) / 100.0
+    return float(percent.strip("%")) / 100.0
 
 
 def is_valid_percentage_str(s: str) -> bool:

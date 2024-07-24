@@ -22,7 +22,7 @@ def main():
     tray_icon.show()
 
     # Initialise file watcher
-    if config['watch_config'] or config['watch_stylesheet']:
+    if config["watch_config"] or config["watch_stylesheet"]:
         observer = create_observer(manager)
         observer.start()
     else:

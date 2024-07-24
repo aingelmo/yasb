@@ -9,19 +9,13 @@ class CustomWidget(BaseWidget):
     validation_schema = VALIDATION_SCHEMA
 
     def __init__(
-            self,
-            label: str,
-            label_alt: str,
-            label_max_length: int,
-            exec_options: dict,
-            callbacks: dict,
-            class_name: str
+        self, label: str, label_alt: str, label_max_length: int, exec_options: dict, callbacks: dict, class_name: str
     ):
-        super().__init__(exec_options['run_interval'], class_name=f"custom-widget {class_name}")
+        super().__init__(exec_options["run_interval"], class_name=f"custom-widget {class_name}")
         self._label_max_length = label_max_length
         self._exec_data = None
-        self._exec_cmd = exec_options['run_cmd'].split(" ") if exec_options.get('run_cmd', False) else None
-        self._exec_return_type = exec_options['return_format']
+        self._exec_cmd = exec_options["run_cmd"].split(" ") if exec_options.get("run_cmd", False) else None
+        self._exec_return_type = exec_options["return_format"]
 
         self._show_alt_label = False
         self._label_content = label
@@ -37,16 +31,16 @@ class CustomWidget(BaseWidget):
         self.register_callback("toggle_label", self._toggle_label)
         self.register_callback("exec_custom", self._exec_callback)
 
-        self.callback_left = callbacks['on_left']
-        self.callback_right = callbacks['on_right']
-        self.callback_middle = callbacks['on_middle']
+        self.callback_left = callbacks["on_left"]
+        self.callback_right = callbacks["on_right"]
+        self.callback_middle = callbacks["on_middle"]
         self.callback_timer = "exec_custom"
 
         self._label.show()
         self._label_alt.hide()
         self._update_label()
 
-        if exec_options['run_once']:
+        if exec_options["run_once"]:
             self._exec_callback()
         else:
             self.start_timer()
@@ -65,7 +59,7 @@ class CustomWidget(BaseWidget):
 
     def _truncate_label(self, label):
         if self._label_max_length and len(label) > self._label_max_length:
-            return label[:self._label_max_length] + "..."
+            return label[: self._label_max_length] + "..."
 
         return label
 
@@ -88,7 +82,7 @@ class CustomWidget(BaseWidget):
             if self._exec_return_type == "json":
                 self._exec_data = json.loads(output)
             else:
-                self._exec_data = output.decode('utf-8').strip()
+                self._exec_data = output.decode("utf-8").strip()
 
             self._update_label()
 

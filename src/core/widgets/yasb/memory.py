@@ -10,12 +10,12 @@ class MemoryWidget(BaseWidget):
     validation_schema = VALIDATION_SCHEMA
 
     def __init__(
-            self,
-            label: str,
-            label_alt: str,
-            update_interval: int,
-            callbacks: dict[str, str],
-            memory_thresholds: dict[str, int]
+        self,
+        label: str,
+        label_alt: str,
+        update_interval: int,
+        callbacks: dict[str, str],
+        memory_thresholds: dict[str, int],
     ):
         super().__init__(update_interval, class_name="memory-widget")
         self._memory_thresholds = memory_thresholds
@@ -34,9 +34,9 @@ class MemoryWidget(BaseWidget):
         self.register_callback("toggle_label", self._toggle_label)
         self.register_callback("update_label", self._update_label)
 
-        self.callback_left = callbacks['on_left']
-        self.callback_right = callbacks['on_right']
-        self.callback_middle = callbacks['on_middle']
+        self.callback_left = callbacks["on_left"]
+        self.callback_right = callbacks["on_right"]
+        self.callback_middle = callbacks["on_middle"]
         self.callback_timer = "update_label"
 
         self._label.show()
@@ -81,17 +81,17 @@ class MemoryWidget(BaseWidget):
             alt_class = "alt" if self._show_alt_label else ""
             active_label.setText(active_label_formatted)
             active_label.setProperty("class", f"label {alt_class} status-{threshold}")
-            active_label.setStyleSheet('')
+            active_label.setStyleSheet("")
         except Exception:
             active_label.setText(active_label_content)
             logging.exception("Failed to retrieve updated memory info")
 
     def _get_virtual_memory_threshold(self, virtual_memory_percent) -> str:
-        if virtual_memory_percent <= self._memory_thresholds['low']:
+        if virtual_memory_percent <= self._memory_thresholds["low"]:
             return "low"
-        elif self._memory_thresholds['low'] < virtual_memory_percent <= self._memory_thresholds['medium']:
+        elif self._memory_thresholds["low"] < virtual_memory_percent <= self._memory_thresholds["medium"]:
             return "medium"
-        elif self._memory_thresholds['medium'] < virtual_memory_percent <= self._memory_thresholds['high']:
+        elif self._memory_thresholds["medium"] < virtual_memory_percent <= self._memory_thresholds["high"]:
             return "high"
-        elif self._memory_thresholds['high'] < virtual_memory_percent:
+        elif self._memory_thresholds["high"] < virtual_memory_percent:
             return "critical"

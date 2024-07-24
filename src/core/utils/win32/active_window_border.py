@@ -6,15 +6,9 @@ from core.utils.win32.windows import WinEvent
 from core.bar import BAR_WM_TITLE
 from core.utils.win32.utilities import get_hwnd_info, get_window_extended_frame_bounds, is_window_maximised
 
-IGNORED_CLASSES = [
-    'WorkerW',
-    'Progman',
-    'Qt620QWindowIcon',
-    'Qt620QWindowToolSaveBits',
-    'XamlExplorerHostIslandWindow'
-]
-IGNORED_TITLES = ['', BAR_WM_TITLE]
-IGNORED_PROCS = ['SearchHost.exe']
+IGNORED_CLASSES = ["WorkerW", "Progman", "Qt620QWindowIcon", "Qt620QWindowToolSaveBits", "XamlExplorerHostIslandWindow"]
+IGNORED_TITLES = ["", BAR_WM_TITLE]
+IGNORED_PROCS = ["SearchHost.exe"]
 
 BORDER_WIDTH = 10
 BORDER_RADIUS = 9
@@ -62,11 +56,13 @@ class ActiveWindowBorder(QWidget):
         self.show()
 
     def _ignored_hwnd(self) -> bool:
-        return self._curr_event_info['title'] in IGNORED_TITLES \
-            or self._curr_event_info['class_name'] in IGNORED_CLASSES \
-            or self._curr_event_info['process']['name'] in IGNORED_PROCS
+        return (
+            self._curr_event_info["title"] in IGNORED_TITLES
+            or self._curr_event_info["class_name"] in IGNORED_CLASSES
+            or self._curr_event_info["process"]["name"] in IGNORED_PROCS
+        )
 
-    def _hide_active_border(self, hwnd: int,  _event: WinEvent):
+    def _hide_active_border(self, hwnd: int, _event: WinEvent):
         self._curr_hwnd = hwnd
         self._curr_event_info = get_hwnd_info(hwnd)
         self.frame.hide()
@@ -83,20 +79,20 @@ class ActiveWindowBorder(QWidget):
 
     def _update_active_window_rect(self):
         try:
-            win_rect = self._curr_event_info['rect']
+            win_rect = self._curr_event_info["rect"]
             frame_bounds_rect = get_window_extended_frame_bounds(self._curr_hwnd)
             pixel_ratio = self.screen().devicePixelRatio()
             virtual_geo = self.screen().virtualGeometry()
 
-            x = int(win_rect['x'] / pixel_ratio)
-            y = int(win_rect['y'] / pixel_ratio)
-            w = int(win_rect['width'] / pixel_ratio)
-            h = int(win_rect['height'] / pixel_ratio)
+            x = int(win_rect["x"] / pixel_ratio)
+            y = int(win_rect["y"] / pixel_ratio)
+            w = int(win_rect["width"] / pixel_ratio)
+            h = int(win_rect["height"] / pixel_ratio)
 
-            x_offset = int((win_rect['x'] - frame_bounds_rect['x']) / pixel_ratio)
-            y_offset = int((win_rect['y'] - frame_bounds_rect['y']) / pixel_ratio)
-            w_offset = int((win_rect['width'] - frame_bounds_rect['width']) / pixel_ratio)
-            h_offset = int((win_rect['height'] - frame_bounds_rect['height']) / pixel_ratio)
+            x_offset = int((win_rect["x"] - frame_bounds_rect["x"]) / pixel_ratio)
+            y_offset = int((win_rect["y"] - frame_bounds_rect["y"]) / pixel_ratio)
+            w_offset = int((win_rect["width"] - frame_bounds_rect["width"]) / pixel_ratio)
+            h_offset = int((win_rect["height"] - frame_bounds_rect["height"]) / pixel_ratio)
 
             x -= x_offset
             y -= y_offset
@@ -109,12 +105,7 @@ class ActiveWindowBorder(QWidget):
             if virtual_geo.y() < 0:
                 y -= virtual_geo.y()
 
-            self.frame.setGeometry(
-                x - BORDER_OFFSET,
-                y - BORDER_OFFSET,
-                w + BORDER_WIDTH,
-                h + BORDER_WIDTH
-            )
+            self.frame.setGeometry(x - BORDER_OFFSET, y - BORDER_OFFSET, w + BORDER_WIDTH, h + BORDER_WIDTH)
         except Exception:
             logging.exception(f"Failed to update active window border for hwnd {self._curr_hwnd}")
 

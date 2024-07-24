@@ -69,9 +69,7 @@ class WifiWidget(BaseWidget):
         # Format the label content
         updated_content = self._label_alt_content if self._show_alt_label else self._label_content
         for label_option in label_options:
-            updated_content = updated_content.replace(
-                label_option[0], str(label_option[1])
-            )
+            updated_content = updated_content.replace(label_option[0], str(label_option[1]))
 
         active_label.setText(updated_content)
 

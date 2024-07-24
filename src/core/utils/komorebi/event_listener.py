@@ -14,12 +14,7 @@ KOMOREBI_PIPE_NAME = "yasb"
 
 
 class KomorebiEventListener(QThread):
-
-    def __init__(
-            self,
-            pipe_name: str = KOMOREBI_PIPE_NAME,
-            buffer_size: int = KOMOREBI_PIPE_BUFF_SIZE
-    ):
+    def __init__(self, pipe_name: str = KOMOREBI_PIPE_NAME, buffer_size: int = KOMOREBI_PIPE_BUFF_SIZE):
         super().__init__()
         self._komorebic = KomorebiClient()
         self._app_running = True
@@ -47,7 +42,7 @@ class KomorebiEventListener(QThread):
             buffer_size_in,
             buffer_size_out,
             default_timeout_ms,
-            security_attributes
+            security_attributes,
         )
         logging.info(f"Created named pipe {self.pipe_name}")
 
@@ -70,8 +65,8 @@ class KomorebiEventListener(QThread):
 
                 try:
                     event_message = json.loads(data.decode("utf-8"))
-                    event = event_message['event']
-                    state = event_message['state']
+                    event = event_message["event"]
+                    state = event_message["state"]
 
                     if event and state:
                         self._emit_event(event, state)
@@ -89,15 +84,17 @@ class KomorebiEventListener(QThread):
     def _emit_event(self, event: dict, state: dict) -> None:
         self.event_service.emit_event(KomorebiEvent.KomorebiUpdate, event, state)
 
-        if event['type'] in KomorebiEvent:
-            self.event_service.emit_event(KomorebiEvent[event['type']], event, state)
+        if event["type"] in KomorebiEvent:
+            self.event_service.emit_event(KomorebiEvent[event["type"]], event, state)
 
     def _wait_until_komorebi_online(self):
         logging.info(f"Waiting for Komorebi to subscribe to named pipe {self.pipe_name}")
         stderr, proc = self._komorebic.wait_until_subscribed_to_pipe(self.pipe_name)
 
         if stderr:
-            logging.warning(f"Komorebi failed to subscribe named pipe. Waiting for subscription: {stderr.decode('utf-8')}")
+            logging.warning(
+                f"Komorebi failed to subscribe named pipe. Waiting for subscription: {stderr.decode('utf-8')}"
+            )
 
         while self._app_running and proc.returncode != 0:
             time.sleep(1)

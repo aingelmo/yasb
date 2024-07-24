@@ -89,16 +89,22 @@ class TrafficWidget(BaseWidget):
         if upload_diff < 1024:
             upload_speed = f"{upload_diff} B/s"
         else:
-            upload_speed = naturalsize(
-                (current_io.bytes_sent - self.bytes_sent) // self.interval,
-            ) + "/s"
+            upload_speed = (
+                naturalsize(
+                    (current_io.bytes_sent - self.bytes_sent) // self.interval,
+                )
+                + "/s"
+            )
 
         if download_diff < 1024:
             download_speed = f"{download_diff} B/s"
         else:
-            download_speed = naturalsize(
-                (current_io.bytes_recv - self.bytes_recv) // self.interval,
-            ) + "/s"
+            download_speed = (
+                naturalsize(
+                    (current_io.bytes_recv - self.bytes_recv) // self.interval,
+                )
+                + "/s"
+            )
 
         self.bytes_sent = current_io.bytes_sent
         self.bytes_recv = current_io.bytes_recv

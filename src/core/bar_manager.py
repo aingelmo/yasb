@@ -23,10 +23,10 @@ class BarManager(QObject):
         self.event_service = EventService()
         self.widget_event_listeners = set()
         self.bars: list[Bar] = list()
-        self.config['bars'] = {n: bar for n, bar in self.config['bars'].items() if bar['enabled']}
+        self.config["bars"] = {n: bar for n, bar in self.config["bars"].items() if bar["enabled"]}
         self._threads = {}
         self._active_listeners = {}
-        self._widget_builder = WidgetBuilder(self.config['widgets'])
+        self._widget_builder = WidgetBuilder(self.config["widgets"])
         self._prev_listeners = set()
 
         self.styles_modified.connect(self.on_styles_modified)
@@ -49,8 +49,7 @@ class BarManager(QObject):
         config = get_config(show_error_dialog=True)
 
         if config and (config != self.config):
-
-            if config['bars'] != self.config['bars'] or config['widgets'] != self.config['widgets']:
+            if config["bars"] != self.config["bars"] or config["widgets"] != self.config["widgets"]:
                 self.config = config
                 self.close_bars()
                 self.initialize_bars()
@@ -92,16 +91,15 @@ class BarManager(QObject):
         self.bars.clear()
 
     def initialize_bars(self, init=False) -> None:
-        self._widget_builder = WidgetBuilder(self.config['widgets'])
+        self._widget_builder = WidgetBuilder(self.config["widgets"])
 
-        for bar_name, bar_config in self.config['bars'].items():
-
-            if bar_config['screens'] == ['*']:
+        for bar_name, bar_config in self.config["bars"].items():
+            if bar_config["screens"] == ["*"]:
                 for screen in QApplication.screens():
                     self.create_bar(bar_config, bar_name, screen, init)
                 continue
 
-            for screen_name in bar_config['screens']:
+            for screen_name in bar_config["screens"]:
                 screen = get_screen_by_name(screen_name)
                 if screen:
                     self.create_bar(bar_config, bar_name, screen, init)
@@ -110,22 +108,22 @@ class BarManager(QObject):
         self._widget_builder.raise_alerts_if_errors_present()
 
     def create_bar(self, config: dict, name: str, screen: QScreen, init=False) -> None:
-        screen_name = screen.name().replace('\\', '').replace('.', '')
+        screen_name = screen.name().replace("\\", "").replace(".", "")
         bar_id = f"{name}_{screen_name}_{str(uuid.uuid4())[:8]}"
         bar_config = deepcopy(config)
-        bar_widgets, widget_event_listeners = self._widget_builder.build_widgets(bar_config.get('widgets', {}))
+        bar_widgets, widget_event_listeners = self._widget_builder.build_widgets(bar_config.get("widgets", {}))
         bar_options = {
             **bar_config,
-            'bar_id': bar_id,
-            'bar_name': name,
-            'bar_screen': screen,
-            'stylesheet': self.stylesheet,
-            'widgets': bar_widgets,
-            'init': init
+            "bar_id": bar_id,
+            "bar_name": name,
+            "bar_screen": screen,
+            "stylesheet": self.stylesheet,
+            "widgets": bar_widgets,
+            "init": init,
         }
 
-        del bar_options['enabled']
-        del bar_options['screens']
+        del bar_options["enabled"]
+        del bar_options["screens"]
 
         self.widget_event_listeners = self.widget_event_listeners.union(widget_event_listeners)
         self.bars.append(Bar(**bar_options))

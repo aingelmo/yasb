@@ -74,7 +74,7 @@ def get_config(show_error_dialog=False) -> Union[dict, None]:
                     title="Failed to load recently updated config file.",
                     msg=f"The file '{config_path}' contains validation error(s) and has not been loaded.",
                     informative_msg="For more information, click 'Show Details'.",
-                    additional_details=pretty_errors
+                    additional_details=pretty_errors,
                 )
     except ParserError as e:
         logging.error(f"The file '{config_path}' contains Parser Error(s). Please fix:\n{str(e)}")
@@ -89,7 +89,7 @@ def get_stylesheet(show_error_dialog=False) -> Union[str, None]:
 
     try:
         parser = CSSParser(raiseExceptions=True)
-        return parser.parseFile(styles_path).cssText.decode('utf-8')
+        return parser.parseFile(styles_path).cssText.decode("utf-8")
     except SyntaxErr as e:
         logging.error(f"The file '{styles_path}' contains Syntax Error(s). Please fix:\n{str(e)}")
         if show_error_dialog:
@@ -97,7 +97,7 @@ def get_stylesheet(show_error_dialog=False) -> Union[str, None]:
                 title="Failed to load recently updated stylesheet file.",
                 msg=f"The file '{styles_path}' contains syntax error(s) and has not been loaded.",
                 informative_msg="For more information, click 'Show Details'.",
-                additional_details=str(e)
+                additional_details=str(e),
             )
     except FileNotFoundError:
         logging.error(f"The file '{styles_path}' could not be found. Does it exist?")
@@ -113,7 +113,7 @@ def get_config_and_stylesheet() -> tuple[dict, str]:
         error_msg = "User config file could not be loaded. Exiting Application."
     elif not stylesheet:
         error_msg = "User stylesheet could not be loaded. Exiting Application."
-    elif not config['bars']:
+    elif not config["bars"]:
         error_msg = "No bars have been configured. Please edit the config to add a status bar."
     else:
         return config, stylesheet

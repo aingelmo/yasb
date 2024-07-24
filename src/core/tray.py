@@ -8,7 +8,6 @@ from settings import GITHUB_URL, FAVICON_PATH, APP_NAME, APP_NAME_FULL
 
 
 class TrayIcon(QSystemTrayIcon):
-
     def __init__(self, bar_manager: BarManager):
         QSystemTrayIcon.__init__(self)
         self._bar_manager = bar_manager
@@ -19,11 +18,11 @@ class TrayIcon(QSystemTrayIcon):
         self.setToolTip(f"{APP_NAME} - {APP_NAME_FULL}")
 
     def _load_favicon(self):
-        self._icon.addFile(f'{FAVICON_PATH}/favicon-16x16.png', QSize(16, 16))
-        self._icon.addFile(f'{FAVICON_PATH}/favicon-32x32.png', QSize(32, 32))
-        self._icon.addFile(f'{FAVICON_PATH}/favicon-152x152.png', QSize(152, 152))
-        self._icon.addFile(f'{FAVICON_PATH}/favicon-192x192.png', QSize(192, 192))
-        self._icon.addFile(f'{FAVICON_PATH}/favicon-512x512.png', QSize(512, 512))
+        self._icon.addFile(f"{FAVICON_PATH}/favicon-16x16.png", QSize(16, 16))
+        self._icon.addFile(f"{FAVICON_PATH}/favicon-32x32.png", QSize(32, 32))
+        self._icon.addFile(f"{FAVICON_PATH}/favicon-152x152.png", QSize(152, 152))
+        self._icon.addFile(f"{FAVICON_PATH}/favicon-192x192.png", QSize(192, 192))
+        self._icon.addFile(f"{FAVICON_PATH}/favicon-512x512.png", QSize(512, 512))
         self.setIcon(self._icon)
 
     def _load_context_menu(self):

@@ -17,6 +17,7 @@ class AppBarEdge:
     A value that specifies the edge of the screen.
     Documentation: https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-appbardata#members
     """
+
     Left = 0
     Top = 1
     Right = 2
@@ -28,6 +29,7 @@ class AppBarMessage:
     SHAppBarMessage App Bar Messages
     Documentation: https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shappbarmessage
     """
+
     New = 0
     Remove = 1
     QueryPos = 2
@@ -48,6 +50,7 @@ class AppBarData(Structure):
     AppBarData struct
     Documentation: https://docs.microsoft.com/en-us/windows/win32/api/shellapi/ns-shellapi-appbardata#syntax
     """
+
     _fields_ = [
         ("cbSize", wintypes.DWORD),
         ("hWnd", wintypes.HWND),
@@ -62,16 +65,13 @@ P_APPBAR_DATA = POINTER(AppBarData)
 
 
 class Win32AppBar:
-    def __init__(self, ):
+    def __init__(
+        self,
+    ):
         self.app_bar_data = None
 
     def create_appbar(
-            self,
-            hwnd: int,
-            edge: AppBarEdge,
-            app_bar_height: int,
-            screen: QScreen,
-            scale_screen: bool = False
+        self, hwnd: int, edge: AppBarEdge, app_bar_height: int, screen: QScreen, scale_screen: bool = False
     ):
         self.app_bar_data = AppBarData()
         self.app_bar_data.cbSize = wintypes.DWORD(sizeof(self.app_bar_data))
