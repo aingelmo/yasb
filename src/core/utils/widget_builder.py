@@ -1,11 +1,12 @@
-import yaml
 import logging
-from PyQt6.QtWidgets import QWidget
-from PyQt6.QtCore import QObject
-from typing import Optional
-from cerberus import Validator
 from importlib import import_module
+from typing import Optional
+
+import yaml
+from cerberus import Validator
 from core.utils.alert_dialog import raise_info_alert
+from PyQt6.QtCore import QObject
+from PyQt6.QtWidgets import QWidget
 from settings import DEFAULT_CONFIG_FILENAME
 
 
@@ -44,7 +45,7 @@ class WidgetBuilder(QObject):
                 widget_schema = getattr(widget_cls, "validation_schema")
                 widget_event_listener = getattr(widget_cls, "event_listener")
 
-                if type(widget_schema) != dict and not widget_schema:
+                if not isinstance(widget_schema, dict) and not widget_schema:
                     raise Exception(f"The widget {widget_cls.__name__} has no validation_schema")
 
                 if widget_event_listener:
